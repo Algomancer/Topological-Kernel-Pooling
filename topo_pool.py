@@ -135,7 +135,7 @@ class ProductEmbedTransform(nn.Module):
         hist.scatter_add_(1, i0f, w0f)
         hist.scatter_add_(1, i1f, w1f)                       # [BD, K]
 
-        cdf = hist.cumsum(dim=1) / S                         # prefix-sum over bins
+        cdf = hist.cumsum(dim=1) / S                   
         cdf = cdf.view(B, T, D, K).permute(0, 1, 3, 2)       # [B,T,K,D]
         return cdf
 
@@ -156,7 +156,7 @@ class ProductEmbedTransform(nn.Module):
         # 2) heights via low-rank contractions -> [B,T,S,D]
         heights = self._heights(x_new, ctx)
 
-        # 3) histogram over S, then prefix-sum over bins -> [B,T,K,D]
+        # 3) histogram over S
         cdf = self._histogram_cdf(heights)
 
         # 4) contract (K,D) with weights -> [B,T,H], finish head
